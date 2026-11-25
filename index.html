@@ -18,5 +18,6 @@ const k64=location.hash.slice(1).replace(/-/g,'+').replace(/_/g,'/');
  const ks=await Promise.all(jobs),out=new Uint8Array(c.length);
  for(let i=0;i<c.length;i++)out[i]=c[i]^new Uint8Array(ks[i>>5])[i&31];
  const h=new TextDecoder().decode(out);document.open();document.write(h);document.close();
+ const t=h.match(/<title>(.*?)<\/title>/);if(t)document.title=t[1];
 }catch(e){document.getElementById('m').textContent='Страница закрыта. Нужна полная ссылка.'}})();
 </script></html>
