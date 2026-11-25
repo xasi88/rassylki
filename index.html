@@ -1,0 +1,22 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Страница</title>
+<style>body{font:18px/1.45 system-ui,sans-serif;background:#0f1a2b;color:#e8eef7;margin:0;padding:24px}</style>
+<p id="m">Открываю...</p>
+<script>
+const D={"s":"","c":"","m":""};
+const b=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const k64=location.hash.slice(1).replace(/-/g,'+').replace(/_/g,'/');
+(async()=>{try{
+ const key=b(k64+'='.repeat((4-k64.length%4)%4)),s=b(D.s),c=b(D.c),m=b(D.m);
+ const hk=await crypto.subtle.importKey('raw',key,{name:'HMAC',hash:'SHA-256'},false,['verify']);
+ const sc=new Uint8Array(s.length+c.length);sc.set(s);sc.set(c,s.length);
+ if(!await crypto.subtle.verify('HMAC',hk,m,sc))throw 0;
+ const n=Math.ceil(c.length/32),jobs=[];
+ for(let i=0;i<n;i++){const x=new Uint8Array(key.length+s.length+4);x.set(key);x.set(s,key.length);
+  new DataView(x.buffer).setUint32(key.length+s.length,i);jobs.push(crypto.subtle.digest('SHA-256',x))}
+ const ks=await Promise.all(jobs),out=new Uint8Array(c.length);
+ for(let i=0;i<c.length;i++)out[i]=c[i]^new Uint8Array(ks[i>>5])[i&31];
+ const h=new TextDecoder().decode(out);document.open();document.write(h);document.close();
+}catch(e){document.getElementById('m').textContent='Страница закрыта. Нужна полная ссылка.'}})();
+</script></html>
